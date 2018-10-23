@@ -1,6 +1,10 @@
 package pkgGame;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Random;
 
 import pkgHelper.LatinSquare;
@@ -14,27 +18,101 @@ import pkgHelper.LatinSquare;
  * @author Bert.Gibbons
  *
  */
+
 public class Sudoku extends LatinSquare {
+	
+	private class Cell extends java.lang.Object {
+		private int iCol;
+		private int iRow;
+		private java.util.ArrayList<java.lang.Integer> lstValidValues;
+		
+		Cell(int iRow, int iCol) {
+			this.iRow = iRow;
+			this.iCol = iCol;
+		}
 
-	/**
-	 * 
-	 * iSize - the length of the width/height of the Sudoku puzzle.
-	 * 
-	 * @version 1.2
-	 * @since Lab #2
-	 */
+		public int getiCol() {
+			return iCol;
+		}
+
+		public int getiRow() {
+			return iRow;
+		}
+		
+		@Override
+		public int hashCode() {
+			return Objects.hash(iRow, iCol);
+		}
+		
+		@Override
+		public boolean equals(java.lang.Object o) {
+			if (o == this) {
+				return true;
+			}
+			
+			if (!(o instanceof Sudoku.Cell)) {
+				return false;
+			}
+			
+			Sudoku.Cell c = (Sudoku.Cell) o;
+			return this.getiCol() == c.getiCol() && this.getiRow() == c.getiRow();
+		}
+
+		public void setLstValidValues(HashSet<Integer> list) {
+			for (Integer val : list) {
+				lstValidValues.add(val);
+			}
+		}
+
+		public java.util.ArrayList<java.lang.Integer> getLstValidValues() {
+			return lstValidValues;
+		}
+		
+		public void ShuffleValidValues() {
+			Collections.shuffle(lstValidValues);
+		}
+		
+		public Sudoku.Cell GetNextCell(Sudoku.Cell c) {
+			int regionNbr = getRegionNbr(c.getiCol(), c.getiRow());
+			if (regionNbr < iSize) {
+				return new Cell(regionNbr%iSize, regionNbr/iSize);
+			}
+			else {
+				return null;
+			}
+		}
+	}
+	
+	private java.util.HashMap<java.lang.Integer, Sudoku.Cell> cells;
 	private int iSize;
-
-	/**
-	 * iSqrtSize - SquareRoot of the iSize. If the iSize is 9, iSqrtSize will be
-	 * calculated as 3
-	 * 
-	 * @version 1.2
-	 * @since Lab #2
-	 */
-
 	private int iSqrtSize;
 
+	
+	private void SetCells() {
+		for (int iRow = 0; iRow < iSize; iRow++) {
+			for (int iCol = 0; iCol < iSize; iCol++) {
+				Sudoku.Cell cell = new Sudoku.Cell(iSqrtSize, iSqrtSize);
+				cell.setLstValidValues(this.getAllValidCellValues(iCol, iRow));
+				cells.put(cell.hashCode(), cell);
+			}
+		}
+	}
+
+	private java.util.HashSet<java.lang.Integer> getAllValidCellValues(int iCol, int iRow) {
+		HashSet<Integer> hs = new HashSet<Integer>();
+		for (int iValue = 1; iValue <= iSqrtSize; iValue++) {
+			if (this.isValidColumnValue(iCol, iValue) && this.isValidRowValue(iRow, iValue) && this.isValidRegionValue(iRow, iCol, iValue)) {
+				hs.add(iValue);
+			}
+		}
+		return hs;
+	}
+	
+	private boolean fillRemaining(Sudoku.Cell c) {
+		
+		return false;
+	}
+	
 	/**
 	 * Sudoku - for Lab #2... do the following:
 	 * 
@@ -252,6 +330,10 @@ public class Sudoku extends LatinSquare {
 
 		return true;
 	}
+	
+	public boolean isValidValue(Sudoku.Cell c, int iValue) {
+		return c.getLstValidValues().contains(iValue);
+	}
 
 	/**
 	 * isValidValue - test to see if a given value would 'work' for a given column /
@@ -269,20 +351,19 @@ public class Sudoku extends LatinSquare {
 	 */
 	public boolean isValidValue(int iRow,int iCol,  int iValue) {
 		
-		if (doesElementExist(super.getRow(iRow),iValue))
-		{
-			return false;
-		}
-		if (doesElementExist(super.getColumn(iCol),iValue))
-		{
-			return false;
-		}
-		if (doesElementExist(this.getRegion(iCol, iRow),iValue))
-		{
-			return false;
-		}
-		
-		return true;
+		return isValidColumnValue(iCol, iValue) && isValidRowValue(iRow, iValue) && isValidRegionValue(iRow, iCol, iValue);
+	}
+	
+	public boolean isValidColumnValue(int iCol, int iValue) {
+		return !super.doesElementExist(this.getColumn(iCol), iValue);
+	}
+	
+	public boolean isValidRowValue(int iRow, int iValue) {
+		return !super.doesElementExist(this.getRow(iRow), iValue);
+	}
+	
+	public boolean isValidRegionValue(int iRow, int iCol, int iValue) {
+		return !super.doesElementExist(this.getRegion(iCol, iRow), iValue);
 	}
 
 	/**
@@ -410,4 +491,6 @@ public class Sudoku extends LatinSquare {
 			ar[i] = a;
 		}
 	}
+	
+	
 }
