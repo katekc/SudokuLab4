@@ -109,7 +109,7 @@ public class Sudoku extends LatinSquare {
 	}
 	
 	private boolean fillRemaining(Sudoku.Cell c) {
-		
+		if ()
 		return false;
 	}
 	
