@@ -132,6 +132,8 @@ public class SudokuTest {
 
 		try {
 			Sudoku s1 = new Sudoku(puzzle);
+			System.out.println("\nisValidValueTest:");
+			s1.PrintPuzzle();
 			assertTrue(s1.isValidValue(0,0,5));
 			assertFalse(s1.isValidValue(0, 0, 6));
 		}
@@ -147,6 +149,17 @@ public class SudokuTest {
 				{ 8, 5, 9, 7, 6, 1, 4, 2, 3 }, { 4, 2, 6, 8, 5, 3, 7, 9, 1 }, { 7, 1, 3, 9, 2, 4, 8, 5, 6 },
 				{ 9, 6, 1, 5, 3, 7, 2, 8, 4 }, { 2, 8, 7, 4, 1, 9, 6, 3, 5 }, { 3, 4, 5, 2, 8, 6, 1, 7, 9 } };
 		
+		
+		try {
+			Sudoku s1 = new Sudoku(9);
+			System.out.println("\nNew Sudoku: ");
+			s1.PrintPuzzle();
+			assertTrue(s1.isSudoku());
+		}
+		
+		catch(Exception e) {
+			fail("Test failed to build Sudoku");
+		}
 	}
 
 }

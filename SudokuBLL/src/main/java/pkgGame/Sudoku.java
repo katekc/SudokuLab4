@@ -12,77 +12,10 @@ import pkgHelper.LatinSquare;
 
 public class Sudoku extends LatinSquare {
 	
-	private java.util.HashMap<java.lang.Integer, Sudoku.Cell> cells;
+	private java.util.HashMap<java.lang.Integer, Sudoku.Cell> cells = new java.util.HashMap<java.lang.Integer, Sudoku.Cell>();
 	private int iSize;
 	private int iSqrtSize;
 
-		private class Cell extends java.lang.Object {
-		
-		private int iCol;
-		private int iRow;
-		private java.util.ArrayList<java.lang.Integer> lstValidValues;
-		
-		Cell(int iRow, int iCol) {
-			this.iRow = iRow;
-			this.iCol = iCol;
-		}
-
-		public int getiCol() {
-			return iCol;
-		}
-
-		public int getiRow() {
-			return iRow;
-		}
-		
-		@Override
-		public int hashCode() {
-			return Objects.hash(iRow, iCol);
-		}
-		
-		@Override
-		public boolean equals(java.lang.Object o) {
-			if (o == this) {
-				return true;
-			}
-			
-			if (!(o instanceof Sudoku.Cell)) {
-				return false;
-			}
-			
-			Sudoku.Cell c = (Sudoku.Cell) o;
-			return this.getiCol() == c.getiCol() && this.getiRow() == c.getiRow();
-		}
-
-		public void setLstValidValues(HashSet<Integer> list) {
-			lstValidValues = new ArrayList<Integer>(list);
-		}
-
-		public java.util.ArrayList<java.lang.Integer> getLstValidValues() {
-			return lstValidValues;
-		}
-		
-		public void ShuffleValidValues() {
-			Collections.shuffle(lstValidValues);
-		}
-		
-		public Sudoku.Cell GetNextCell(Sudoku.Cell c) {
-			int iCol = c.getiCol() + 1;
-			int iRow = c.getiRow();
-			int iSqrtSize = (int) Math.sqrt(iSize);
-
-			if (iCol >= iSize && iRow < iSize - 1) {
-				iRow = iRow + 1;
-				iCol = 0;
-			}
-			if (iRow >= iSize && iCol >= iSize)
-				return null;
-
-			return (Cell) cells.get(Objects.hash(iRow, iCol));
-		}
-	}
-		
-	
 	public Sudoku(int iSize) throws Exception {
 		this.iSize = iSize;
 
@@ -155,9 +88,6 @@ public class Sudoku extends LatinSquare {
 	}
 	
 	private boolean fillRemaining(Sudoku.Cell c) {
-		// searches through the puzzle for any values=0 if the value=0 it will reprint a valid value
-		//if true- puzzle is valid and will print ... if false- go back and repeat steps until it returns true
-
 		if (c == null) {
 			return true;
 		}
@@ -382,15 +312,15 @@ public class Sudoku extends LatinSquare {
 	}
 	
 	public boolean isValidColumnValue(int iCol, int iValue) {
-		return !super.doesElementExist(this.getColumn(iCol), iValue);
+		return !this.doesElementExist(super.getColumn(iCol), iValue);
 	}
 	
 	public boolean isValidRowValue(int iRow, int iValue) {
-		return !super.doesElementExist(this.getRow(iRow), iValue);
+		return !this.doesElementExist(this.getRow(iRow), iValue);
 	}
 	
 	public boolean isValidRegionValue(int iRow, int iCol, int iValue) {
-		return !super.doesElementExist(this.getRegion(iCol, iRow), iValue);
+		return !this.doesElementExist(this.getRegion(iCol, iRow), iValue);
 	}
 
 	/**
@@ -519,5 +449,72 @@ public class Sudoku extends LatinSquare {
 		}
 	}
 	
+
+	private class Cell extends java.lang.Object {
 	
+	private int iCol;
+	private int iRow;
+	private java.util.ArrayList<java.lang.Integer> lstValidValues;
+	
+	Cell(int iRow, int iCol) {
+		this.iRow = iRow;
+		this.iCol = iCol;
+	}
+
+	public int getiCol() {
+		return iCol;
+	}
+
+	public int getiRow() {
+		return iRow;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(iRow, iCol);
+	}
+	
+	@Override
+	public boolean equals(java.lang.Object o) {
+		if (o == this) {
+			return true;
+		}
+		
+		if (!(o instanceof Sudoku.Cell)) {
+			return false;
+		}
+		
+		Sudoku.Cell c = (Sudoku.Cell) o;
+		return this.getiCol() == c.getiCol() && this.getiRow() == c.getiRow();
+	}
+
+	public void setLstValidValues(HashSet<Integer> list) {
+		lstValidValues = new ArrayList<Integer>(list);
+	}
+
+	public java.util.ArrayList<java.lang.Integer> getLstValidValues() {
+		return lstValidValues;
+	}
+	
+	public void ShuffleValidValues() {
+		Collections.shuffle(lstValidValues);
+	}
+	
+	public Sudoku.Cell GetNextCell(Sudoku.Cell c) {
+		int iCol = c.getiCol() + 1;
+		int iRow = c.getiRow();
+		int iSqrtSize = (int) Math.sqrt(iSize);
+
+		if (iCol >= iSize && iRow < iSize - 1) {
+			iRow = iRow + 1;
+			iCol = 0;
+		}
+		if (iRow >= iSize && iCol >= iSize)
+			return null;
+
+		return (Cell) cells.get(Objects.hash(iRow, iCol));
+	}
+}
+	
+
 }
